@@ -5,20 +5,12 @@ using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddOpenApi();
-
-builder.Services.AddDbContext<CoffeeDbContext>(options =>
+builder.Services.AddDbContext<CoffeeMakerDbContext>(options =>
     options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=CoffeeMakerDb;Trusted_Connection=True;"));
-builder.Services.AddSingleton<CoffeeBrewingCalculator>();
+
+builder.Services.AddScoped<CoffeeBrewingCalculator>();
 
 var app = builder.Build();
-
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
-app.UseHttpsRedirection();
 
 app.MapPost("/brew-recommendation/{roastProfileId:int}", async (BrewingRecommendationRequest request, CoffeeBrewingCalculator calculator) =>
     {

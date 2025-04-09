@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeMaker.Api;
 
-public class CoffeeBrewingCalculator(CoffeeDbContext context)
+public class CoffeeBrewingCalculator(CoffeeMakerDbContext context)
 {
     public async Task<BrewingRecommendationResponse> CalculateBrewingRecommendation(BrewingRecommendationRequest request)
     {

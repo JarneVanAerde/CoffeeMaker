@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace CoffeeMaker.Api.Infrastructure;
 
-public class CoffeeDbContext(DbContextOptions<CoffeeDbContext> options) : DbContext(options)
+public class CoffeeMakerDbContext(DbContextOptions<CoffeeMakerDbContext> options) : DbContext(options)
 {
     public DbSet<RoastProfile> RoastProfiles { get; set; }
     
