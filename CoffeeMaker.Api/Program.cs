@@ -1,21 +1,28 @@
-using CoffeeMaker.Api;
 using CoffeeMaker.Api.Contracts;
 using CoffeeMaker.Api.Infrastructure;
 using Microsoft.EntityFrameworkCore;
 
-var builder = WebApplication.CreateBuilder(args);
+namespace CoffeeMaker.Api;
 
-builder.Services.AddDbContext<CoffeeMakerDbContext>(options =>
-    options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=CoffeeMakerDb;Trusted_Connection=True;"));
-
-builder.Services.AddScoped<CoffeeBrewingCalculator>();
-
-var app = builder.Build();
-
-app.MapPost("/brew-recommendation/{roastProfileId:int}", async (BrewingRecommendationRequest request, CoffeeBrewingCalculator calculator) =>
+public class Program
+{
+    public static void Main(string[] args)
     {
-        var recommendation = await calculator.CalculateBrewingRecommendation(request);
-        return Results.Ok(recommendation);
-    });
+        var builder = WebApplication.CreateBuilder(args);
+        
+        builder.Services.AddDbContext<CoffeeMakerDbContext>(options =>
+            options.UseSqlServer("Server=(localdb)\\mssqllocaldb;Database=CoffeeMakerDb;Trusted_Connection=True;"));
 
-app.Run();
+        builder.Services.AddScoped<CoffeeBrewingCalculator>();
+
+        var app = builder.Build();
+        
+        app.MapPost("/brew-recommendation/{roastProfileId:int}", async (BrewingRecommendationRequest request, CoffeeBrewingCalculator calculator) =>
+        {
+            var recommendation = await calculator.CalculateBrewingRecommendation(request);
+            return Results.Ok(recommendation);
+        });
+        
+        app.Run();
+    }
+}
