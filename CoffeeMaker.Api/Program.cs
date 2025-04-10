@@ -17,7 +17,7 @@ public class Program
 
         var app = builder.Build();
         
-        app.MapPost("/brew-recommendation/{roastProfileId:int}", async (BrewingRecommendationRequest request, CoffeeBrewingCalculator calculator) =>
+        app.MapPost("api/brew-recommendation", async (BrewingRecommendationRequest request, CoffeeBrewingCalculator calculator) =>
         {
             var recommendation = await calculator.CalculateBrewingRecommendation(request);
             return Results.Ok(recommendation);

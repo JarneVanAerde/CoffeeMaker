@@ -10,6 +10,7 @@ public class CoffeeMakerDbContext(DbContextOptions<CoffeeMakerDbContext> options
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
         modelBuilder.Entity<RoastProfile>()
+            .HasNoKey()
             .HasIndex(r => r.RoastName)
             .IsUnique();
     }
