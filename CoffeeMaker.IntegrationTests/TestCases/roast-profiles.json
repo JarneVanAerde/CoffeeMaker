@@ -1,0 +1,32 @@
+[
+  {
+    "RoastName": "Midnight Ember",
+    "RoastLevel": "Dark",
+    "BeanDensity": 0.65,
+    "RoastDate": "2025-04-05T09:30:00"
+  },
+  {
+    "RoastName": "Golden Bloom",
+    "RoastLevel": "Light",
+    "BeanDensity": 0.72,
+    "RoastDate": "2025-03-28T14:45:00"
+  },
+  {
+    "RoastName": "Velvet Dusk",
+    "RoastLevel": "Medium",
+    "BeanDensity": 0.68,
+    "RoastDate": "2025-04-01T11:00:00"
+  },
+  {
+    "RoastName": "Morning Whisper",
+    "RoastLevel": "Light",
+    "BeanDensity": 0.74,
+    "RoastDate": "2025-03-22T08:15:00"
+  },
+  {
+    "RoastName": "Crimson Peak",
+    "RoastLevel": "Medium",
+    "BeanDensity": 0.70,
+    "RoastDate": "2025-04-08T16:20:00"
+  }
+]
