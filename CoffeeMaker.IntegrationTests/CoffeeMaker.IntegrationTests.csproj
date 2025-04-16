@@ -24,4 +24,31 @@
       <ProjectReference Include="..\CoffeeMaker.Api\CoffeeMaker.Api.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <None Update="TestCases\roast-profiles.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="TestCases\DarkRoastEspressoAdjustments\request.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="TestCases\DarkRoastEspressoAdjustments\response.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="TestCases\OldLightRoastWithFreshnessBoost\request.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="TestCases\OldLightRoastWithFreshnessBoost\response.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="TestCases\HighStrengthFrenchPressTiming\request.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="TestCases\HighStrengthFrenchPressTiming\response.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+      <None Update="TestCases\HighStrengthFrenchPressTiming\response.json">
+        <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
 </Project>

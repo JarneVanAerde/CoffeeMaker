@@ -1,7 +1,5 @@
 using System.Reflection;
 using System.Text.Json;
-using System.Text.Json.Serialization;
-using CoffeeMaker.Api.Contracts;
 using CoffeeMaker.Api.Domain;
 using CoffeeMaker.IntegrationTests.Dtos;
 using CoffeeMaker.IntegrationTests.Models;
@@ -23,23 +21,17 @@ public class FileDataAttribute(string baseFolderPath) : DataAttribute
         }
     }
 
-    private static async Task<K?> GetJsonContent<K>(DirectoryInfo directory, string fileName) where K : class
+    private static async Task<T?> GetJsonContent<T>(DirectoryInfo directory, string fileName) where T : class
     {
-        var settings = new JsonSerializerOptions
-        {
-            RespectRequiredConstructorParameters = false,
-            Converters = { new JsonStringEnumConverter() }
-        };
-
         var path = Path.Combine(directory.FullName, fileName);
         if (File.Exists(path))
         {
-            using FileStream openStream = File.OpenRead(path);
-            return await JsonSerializer.DeserializeAsync<K>(openStream, settings);
+            await using var openStream = File.OpenRead(path);
+            return await JsonSerializer.DeserializeAsync<T>(openStream);
         }
         
         if (directory.Parent != null)
-            return GetJsonContent<K>(directory.Parent, fileName).Result;
+            return GetJsonContent<T>(directory.Parent, fileName).Result;
 
         return default;
     }
@@ -63,21 +55,21 @@ public class FileDataAttribute(string baseFolderPath) : DataAttribute
         var cases = new List<TestCase>();
         var directoryInfo = new DirectoryInfo(path);
         
+        var roastProfiles = await GetRoastProfiles(directoryInfo);
+        
         foreach (var directory in directoryInfo.GetDirectories())
         {
             if (directory.GetDirectories().Length == 0)
             {
-                var request = await GetJsonContent<BrewingRecommendationRequest>(directory, "request.json");
-                var response = await GetJsonContent<BrewingRecommendationResponse>(directory, "response.json");
-
-                var warehouses = await GetRoastProfiles(directory);
-
+                // var request = await GetJsonContent<BrewingRecommendationRequest>(directory, "request.json");
+                // var response = await GetJsonContent<BrewingRecommendationResponse>(directory, "response.json");
+                
                 cases.Add(new TestCase
                 {
                     Name = directory.Name,
-                    RoastProfiles = warehouses,
-                    Request = request!,
-                    Response = response!,
+                    RoastProfiles = roastProfiles,
+                    // Request = request!,
+                    // Response = response!,
                 });
             }
             else

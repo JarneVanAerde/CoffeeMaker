@@ -2,6 +2,8 @@ using System.Net.Http.Json;
 using CoffeeMaker.Api;
 using CoffeeMaker.Api.Contracts;
 using CoffeeMaker.Api.Infrastructure;
+using CoffeeMaker.IntegrationTests.Models;
+using CoffeeMaker.IntegrationTests.Setup;
 using Microsoft.Extensions.DependencyInjection;
 using Xunit;
 
@@ -16,19 +18,22 @@ public class BrewRecommendationTests : IClassFixture<CustomWebApplicationFactory
         _factory = factory;
     }
 
-    [Fact]
-    public async Task Test()
+    [Theory]
+    [FileData("TestCases")]
+    public async Task Test(TestCase testCase)
     {
-        //Arrange
+        // Arrange
         var client = _factory.CreateClient();
-        // var db = _factory.Services.GetRequiredService<CoffeeMakerDbContext>();
-        //
-        // db.Database.EnsureDeleted();
-        // db.Database.EnsureCreated();
+        var db = _factory.Services.GetRequiredService<CoffeeMakerDbContext>();
         
-        //await db.SaveChangesAsync();
+        await db.Database.EnsureDeletedAsync(); 
+        await db.Database.EnsureCreatedAsync();
 
-        //Act
+        await db.AddRangeAsync(testCase.RoastProfiles);
+        
+        await db.SaveChangesAsync();
+
+        // Act
         await client.PostAsJsonAsync("api/brew-recommendation", new BrewingRecommendationRequest
         {
             BrewDate = DateTime.Now,
@@ -37,7 +42,7 @@ public class BrewRecommendationTests : IClassFixture<CustomWebApplicationFactory
             DesiredStrength = 5
         });
 
-        //Assert
+        // Assert
         Assert.True(true);
     }
 }
