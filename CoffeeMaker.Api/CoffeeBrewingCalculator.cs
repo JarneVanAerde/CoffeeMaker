@@ -10,6 +10,7 @@ public class CoffeeBrewingCalculator(CoffeeMakerDbContext context)
 {
     public async Task<BrewingRecommendationResponse> CalculateBrewingRecommendation(BrewingRecommendationRequest request)
     {
+        var test = context.RoastProfiles.ToList();
         var roastProfile = await context.RoastProfiles
             .FirstOrDefaultAsync(r => r.RoastName == request.RoastName);
 

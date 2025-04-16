@@ -1,6 +1,6 @@
 @ProefTraining.LINQToSQL_HostAddress = http://localhost:5138
 
-GET {{ProefTraining.LINQToSQL_HostAddress}}/setup
+GET {{ProefTraining.LINQToSQL_HostAddress}}/seed
 Accept: application/json
 
 ###

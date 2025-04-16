@@ -1,4 +1,5 @@
 using System.Net.Http.Json;
+using System.Text.Json;
 using CoffeeMaker.Api;
 using CoffeeMaker.Api.Contracts;
 using CoffeeMaker.Api.Infrastructure;
@@ -29,15 +30,25 @@ public class BrewRecommendationTests(CustomWebApplicationFactory<Program> factor
     
         // Act
         var client = factory.CreateClient();
-        await client.PostAsJsonAsync("api/brew-recommendation", new BrewingRecommendationRequest
-        {
-            BrewDate = DateTime.Now,
-            Method = "FrenchPress",
-            RoastName = "Ethiopian Sunrise",
-            DesiredStrength = 5
-        }, TestContext.Current.CancellationToken);
+        var response = await client.PostAsJsonAsync("api/brew-recommendation", testCase.Request, TestContext.Current.CancellationToken);
     
-        // Assert
-        Assert.True(true);
+        //Assert
+        BrewingRecommendationResponse? responseContent;
+        if (response.IsSuccessStatusCode)
+        {
+            responseContent = await response.Content.ReadFromJsonAsync<BrewingRecommendationResponse>(TestContext.Current.CancellationToken);
+            Assert.Equivalent(testCase.Response, responseContent);      
+        }
+        else
+            throw new Exception(await response.Content.ReadAsStringAsync(TestContext.Current.CancellationToken));
+
+        // Upload attachments
+        var serializerOptions = new JsonSerializerOptions { WriteIndented = true };
+        TestContext.Current.AddAttachment("actual-response.json", JsonSerializer.Serialize(responseContent, serializerOptions));
+
+        foreach (var attachment in testCase.Attachments)
+        {
+            TestContext.Current.AddAttachment(attachment.Key, attachment.Value);
+        }
     }
 }

@@ -6,6 +6,7 @@ namespace CoffeeMaker.IntegrationTests.Models;
 public class TestCase
 {
     public required string Name { get; set; }
+    public Dictionary<string, string> Attachments { get; set; }
     
     public required BrewingRecommendationRequest Request { get; set; }
     public required BrewingRecommendationResponse Response { get; set; }

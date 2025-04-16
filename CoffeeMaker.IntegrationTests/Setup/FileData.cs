@@ -1,6 +1,7 @@
 using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using CoffeeMaker.Api.Contracts;
 using CoffeeMaker.Api.Domain;
 using CoffeeMaker.IntegrationTests.Dtos;
@@ -13,6 +14,8 @@ namespace CoffeeMaker.IntegrationTests.Setup;
 
 public class FileDataAttribute(string baseFolderPath) : DataAttribute
 {
+    private static readonly Dictionary<string, string> _attachments = new();
+    
     public override async ValueTask<IReadOnlyCollection<ITheoryDataRow>> GetData(MethodInfo testMethod, DisposalTracker disposalTracker)
     {
         var cases = await GetTestCases(baseFolderPath);
@@ -27,15 +30,22 @@ public class FileDataAttribute(string baseFolderPath) : DataAttribute
 
     private static async Task<T?> GetJsonContent<T>(DirectoryInfo directory, string fileName) where T : class
     {
+        var settings = new JsonSerializerOptions
+        {
+            WriteIndented = true,
+            Converters = { new JsonStringEnumConverter() }
+        };
+
         var path = Path.Combine(directory.FullName, fileName);
         if (File.Exists(path))
         {
-            await using var openStream = File.OpenRead(path);
-            return await JsonSerializer.DeserializeAsync<T>(openStream);
+            var jsonFile = await File.ReadAllTextAsync(path);
+            _attachments[fileName] = jsonFile;
+            return JsonSerializer.Deserialize<T>(jsonFile, settings);
         }
         
         if (directory.Parent != null)
-            return GetJsonContent<T>(directory.Parent, fileName).Result;
+            return await GetJsonContent<T>(directory.Parent, fileName);
 
         return default;
     }
@@ -56,6 +66,7 @@ public class FileDataAttribute(string baseFolderPath) : DataAttribute
 
     private async Task<List<TestCase>> GetTestCases(string path)
     {
+        _attachments.Clear();
         var cases = new List<TestCase>();
         var directoryInfo = new DirectoryInfo(path);
         
@@ -74,6 +85,7 @@ public class FileDataAttribute(string baseFolderPath) : DataAttribute
                     RoastProfiles = roastProfiles,
                     Request = request!,
                     Response = response!,
+                    Attachments = _attachments
                 });
             }
             else
