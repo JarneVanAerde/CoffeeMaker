@@ -2,8 +2,8 @@ using CoffeeMaker.Api;
 using CoffeeMaker.Api.Infrastructure;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc.Testing;
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace CoffeeMaker.IntegrationTests.Setup;
@@ -12,16 +12,14 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
 {
     protected override void ConfigureWebHost(IWebHostBuilder builder)
     {
-        builder.ConfigureServices((_, services) =>
+        builder.ConfigureTestServices(services =>
         {
-            services.Remove(services.Single(d => d.ServiceType == typeof(IDbContextOptionsConfiguration<CoffeeMakerDbContext>)));
+            services.Remove(services.Single(d => d.ImplementationType == typeof(CoffeeMakerDbContext)));
             services.AddDbContext<CoffeeMakerDbContext>(options =>
             {
                 options.UseInMemoryDatabase("TestDb", b => b.EnableNullChecks(false));
                 options.EnableSensitiveDataLogging();
             });
-            
-            // var test = services.Where()
         });
     }
 }

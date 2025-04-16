@@ -17,17 +17,18 @@ public class BrewRecommendationTests(CustomWebApplicationFactory<Program> factor
     public async Task Test(TestCase testCase)
     {
         // Arrange
-        var client = factory.CreateClient();
-        var db = factory.Services.GetRequiredService<CoffeeMakerDbContext>();
+        using var scope = factory.Services.CreateScope();
+        var db = scope.ServiceProvider.GetRequiredService<CoffeeMakerDbContext>();
         
         await db.Database.EnsureDeletedAsync(TestContext.Current.CancellationToken); 
         await db.Database.EnsureCreatedAsync(TestContext.Current.CancellationToken);
     
-        await db.AddRangeAsync(testCase.RoastProfiles,  TestContext.Current.CancellationToken);
+        await db.AddRangeAsync(testCase.RoastProfiles, TestContext.Current.CancellationToken);
         
         await db.SaveChangesAsync(TestContext.Current.CancellationToken);
     
         // Act
+        var client = factory.CreateClient();
         await client.PostAsJsonAsync("api/brew-recommendation", new BrewingRecommendationRequest
         {
             BrewDate = DateTime.Now,
