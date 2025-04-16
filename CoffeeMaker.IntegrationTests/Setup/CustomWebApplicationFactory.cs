@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace CoffeeMaker.IntegrationTests;
+namespace CoffeeMaker.IntegrationTests.Setup;
 
 public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProgram> where TProgram : Program
 {
@@ -14,13 +14,14 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
     {
         builder.ConfigureServices((_, services) =>
         {
-            // Overwrite real database implementation with in-memory variant
             services.Remove(services.Single(d => d.ServiceType == typeof(IDbContextOptionsConfiguration<CoffeeMakerDbContext>)));
             services.AddDbContext<CoffeeMakerDbContext>(options =>
             {
                 options.UseInMemoryDatabase("TestDb", b => b.EnableNullChecks(false));
                 options.EnableSensitiveDataLogging();
             });
+            
+            // var test = services.Where()
         });
     }
 }

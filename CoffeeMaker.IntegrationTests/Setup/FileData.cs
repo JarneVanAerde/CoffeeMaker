@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text.Json;
+using CoffeeMaker.Api.Contracts;
 using CoffeeMaker.Api.Domain;
 using CoffeeMaker.IntegrationTests.Dtos;
 using CoffeeMaker.IntegrationTests.Models;
@@ -61,15 +62,15 @@ public class FileDataAttribute(string baseFolderPath) : DataAttribute
         {
             if (directory.GetDirectories().Length == 0)
             {
-                // var request = await GetJsonContent<BrewingRecommendationRequest>(directory, "request.json");
-                // var response = await GetJsonContent<BrewingRecommendationResponse>(directory, "response.json");
+                var request = await GetJsonContent<BrewingRecommendationRequest>(directory, "request.json");
+                var response = await GetJsonContent<BrewingRecommendationResponse>(directory, "response.json");
                 
                 cases.Add(new TestCase
                 {
                     Name = directory.Name,
                     RoastProfiles = roastProfiles,
-                    // Request = request!,
-                    // Response = response!,
+                    Request = request!,
+                    Response = response!,
                 });
             }
             else

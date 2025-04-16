@@ -1,0 +1,19 @@
+@ProefTraining.LINQToSQL_HostAddress = http://localhost:5138
+
+GET {{ProefTraining.LINQToSQL_HostAddress}}/setup
+Accept: application/json
+
+###
+
+POST {{ProefTraining.LINQToSQL_HostAddress}}/api/brew-recommendation
+Accept: application/json
+Content-Type: application/json
+
+{
+  "RoastName": "Midnight Ember",
+  "Method": "Espresso",
+  "DesiredStrength": 5,
+  "BrewDate": "2025-04-10T08:00:00"
+}
+
+###
