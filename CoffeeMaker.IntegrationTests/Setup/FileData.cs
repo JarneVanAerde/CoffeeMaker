@@ -1,25 +1,28 @@
+using System.Collections.ObjectModel;
 using System.Reflection;
 using System.Text.Json;
 using CoffeeMaker.Api.Contracts;
 using CoffeeMaker.Api.Domain;
 using CoffeeMaker.IntegrationTests.Dtos;
 using CoffeeMaker.IntegrationTests.Models;
+using Xunit;
 using Xunit.Sdk;
+using Xunit.v3;
 
 namespace CoffeeMaker.IntegrationTests.Setup;
 
 public class FileDataAttribute(string baseFolderPath) : DataAttribute
 {
-    public override IEnumerable<object[]> GetData(MethodInfo testMethod)
+    public override async ValueTask<IReadOnlyCollection<ITheoryDataRow>> GetData(MethodInfo testMethod, DisposalTracker disposalTracker)
     {
-        ArgumentNullException.ThrowIfNull(testMethod);
+        var cases = await GetTestCases(baseFolderPath);
 
-        var cases = GetTestCases(baseFolderPath).GetAwaiter().GetResult();
+        return new ReadOnlyCollection<TheoryDataRow>(cases.Select(x => new TheoryDataRow(x)).ToList());
+    }
 
-        foreach (var item in cases)
-        {
-            yield return new object[] { item };
-        }
+    public override bool SupportsDiscoveryEnumeration()
+    {
+        return false;
     }
 
     private static async Task<T?> GetJsonContent<T>(DirectoryInfo directory, string fileName) where T : class

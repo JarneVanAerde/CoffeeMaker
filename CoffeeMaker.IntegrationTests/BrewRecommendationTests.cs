@@ -9,30 +9,24 @@ using Xunit;
 
 namespace CoffeeMaker.IntegrationTests;
 
-public class BrewRecommendationTests : IClassFixture<CustomWebApplicationFactory<Program>>
+public class BrewRecommendationTests(CustomWebApplicationFactory<Program> factory)
+    : IClassFixture<CustomWebApplicationFactory<Program>>
 {
-    private readonly CustomWebApplicationFactory<Program> _factory;
-
-    public BrewRecommendationTests(CustomWebApplicationFactory<Program> factory)
-    {
-        _factory = factory;
-    }
-
     [Theory]
     [FileData("TestCases")]
     public async Task Test(TestCase testCase)
     {
         // Arrange
-        var client = _factory.CreateClient();
-        var db = _factory.Services.GetRequiredService<CoffeeMakerDbContext>();
+        var client = factory.CreateClient();
+        var db = factory.Services.GetRequiredService<CoffeeMakerDbContext>();
         
-        await db.Database.EnsureDeletedAsync(); 
-        await db.Database.EnsureCreatedAsync();
-
-        await db.AddRangeAsync(testCase.RoastProfiles);
+        await db.Database.EnsureDeletedAsync(TestContext.Current.CancellationToken); 
+        await db.Database.EnsureCreatedAsync(TestContext.Current.CancellationToken);
+    
+        await db.AddRangeAsync(testCase.RoastProfiles,  TestContext.Current.CancellationToken);
         
-        await db.SaveChangesAsync();
-
+        await db.SaveChangesAsync(TestContext.Current.CancellationToken);
+    
         // Act
         await client.PostAsJsonAsync("api/brew-recommendation", new BrewingRecommendationRequest
         {
@@ -40,8 +34,8 @@ public class BrewRecommendationTests : IClassFixture<CustomWebApplicationFactory
             Method = "FrenchPress",
             RoastName = "Ethiopian Sunrise",
             DesiredStrength = 5
-        });
-
+        }, TestContext.Current.CancellationToken);
+    
         // Assert
         Assert.True(true);
     }

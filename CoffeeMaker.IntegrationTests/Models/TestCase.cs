@@ -7,9 +7,9 @@ public class TestCase
 {
     public required string Name { get; set; }
     
-    public BrewingRecommendationRequest Request { get; set; }
-    public BrewingRecommendationResponse Response { get; set; }
-    public List<RoastProfile> RoastProfiles { get; set; }
+    public required BrewingRecommendationRequest Request { get; set; }
+    public required BrewingRecommendationResponse Response { get; set; }
+    public required List<RoastProfile> RoastProfiles { get; set; }
 
     public override string ToString()
     {
