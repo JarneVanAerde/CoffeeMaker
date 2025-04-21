@@ -14,7 +14,14 @@ public class CustomWebApplicationFactory<TProgram> : WebApplicationFactory<TProg
     {
         builder.ConfigureTestServices(services =>
         {
-            services.Remove(services.Single(d => d.ImplementationType == typeof(CoffeeMakerDbContext)));
+            // Overwrite the real database implementation with an in-memory one.
+            var descriptor = services.SingleOrDefault(
+                d => d.ServiceType == typeof(DbContextOptions<CoffeeMakerDbContext>));
+            if (descriptor != null)
+            {
+                services.Remove(descriptor);
+            }
+            
             services.AddDbContext<CoffeeMakerDbContext>(options =>
             {
                 options.UseInMemoryDatabase("TestDb", b => b.EnableNullChecks(false));
