@@ -1,4 +1,8 @@
-# Setup
+## Summary
+
+A simple application to demonstrate an easy integration test setup where QA-ers can collaborate on togheter with DEV.
+
+## Setup
 
 Run the following commands:
 1.  `docker pull mcr.microsoft.com/mssql/server`
